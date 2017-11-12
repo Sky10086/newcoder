@@ -190,7 +190,7 @@ void ChooseSort<T>::onCreate()
      @param array input array
      @return sorted success or not
      */
-    base::mSortFunc = [&](vector<T> array)
+    base::mSortFunc = [&](vector<T> &array)
     {
         int len = array.size();
         if (len < 2)
@@ -269,8 +269,8 @@ void QuickSort<T>::onCreate()
             int lessEnd = 0;
             int moreBegin = 0;
             partitionFunc(array,start,end,lessEnd,moreBegin);
-//            quickHelp(array,start,lessEnd);
-//            quickHelp(array,moreBegin,end);
+            quickHelp(array,start,lessEnd);
+            quickHelp(array,moreBegin,end);
         }
         return ;
     };
