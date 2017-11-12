@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+project(sky_newcoder)
+message(STATUS "operation system is ${CMAKE_SYSTEM}")
+set(root "./")
+if(DEBUG)
+    message(build for debug)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+else()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+endif(DEBUG)
+include_directories(${root}/include ${root}/unitTest ${root}/utils)
+#generate the library 
+file(GLOB ALGORITHM_SRC ${root}/src/*.cpp ${root}/include/*.h ${root}/utils/*.*)
+add_library(algorithm STATIC ${ALGORITHM_SRC})
+
+#gen the unitTest program 
+file(GLOB TEST_SRC ${root}/unitTest/*.*)
+add_executable(unitTest.out ${TEST_SRC})
+target_link_libraries(unitTest.out algorithm)

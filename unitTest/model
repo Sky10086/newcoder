@@ -1,0 +1,12 @@
+#include "unitTest.h"
+class XXXXXXXXXXXXXX:public UnitTestBase
+{
+    public:
+        virtual void run()
+        {
+        }
+        XXXXXXXXXXXXXX(){}
+        virtual ~XXXXXXXXXXXXXX(){}
+};
+
+static UnitTestRegister<XXXXXXXXXXXXXX> a("XXXXXXXXXXXXXX");
