@@ -14,6 +14,8 @@ class SkyNewCoderAllSortTest:public UnitTestBase
             selectSort->onCreate();
             auto quickSort = shared_ptr<SortBase<int>>(new QuickSort<int>);
             quickSort->onCreate();
+            auto quickSortInt = shared_ptr<SortBase<int>>(new QuickSortInt);
+            quickSortInt->onCreate();
             InRandom random(1,8000);
             
             for (int i = 0; i < 1; i++)
@@ -28,17 +30,20 @@ class SkyNewCoderAllSortTest:public UnitTestBase
                 auto insertRes = array;
                 auto selectRes = array;
                 auto quickRes = array;
+                auto quickIntRes = array;
                 bubble->onSort(bubbleRes);
                 insertSort->onSort(insertRes);
                 selectSort->onSort(selectRes);
                 quickSort->onSort(quickRes);
+                quickSortInt->onSort(quickIntRes);
                 sort(compare.begin(), compare.end());
                 for (int k = 0;k < compare.size();k++)
                 {
                     GLASSERT(bubbleRes[k] == compare[k]);
                     GLASSERT(insertRes[k] == compare[k]);
                     GLASSERT(selectRes[k] == compare[k]);
-//                    GLASSERT(quickRes[k] == compare[k]);
+                    GLASSERT(quickRes[k] == compare[k]);
+                    GLASSERT(quickIntRes[k] == compare[k]);
                 }
             }
         }

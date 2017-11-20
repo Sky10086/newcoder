@@ -1,4 +1,4 @@
-//
+
 //  Header.h
 //  sky_newcoder
 //
@@ -15,12 +15,13 @@
 #include "InTime.h"
 using namespace std;
 
+
 template <class T>
 class SortBase
 {
 public:
     virtual void onCreate() = 0;
-    virtual void onSort(vector<T>& array) = 0;
+    virtual float onSort(vector<T>& array) = 0;
     void sky_swap(vector<T> &array,int i,int j);
     void sky_swap(T& a,T& b );
     /// just for practice the lambda
@@ -68,9 +69,12 @@ class BubbleSort : public SortBase<T>
 public:
     
     virtual void onCreate();
-    virtual void onSort(vector<T>& array)
+    virtual float onSort(vector<T>& array)
     {
+        InTime time;
+        TIME_START("");
         SortBase<T>::mSortFunc(array);
+        return TIME_END_RETURN;
     }
     virtual ~BubbleSort()
     {
@@ -113,9 +117,12 @@ public:
     typedef  SortBase<T> base;
     
     virtual void onCreate();
-    virtual void onSort(vector<T>& array)
+    virtual float onSort(vector<T>& array)
     {
-        base::mSortFunc(array);
+        InTime time;
+        TIME_START("");
+        SortBase<T>::mSortFunc(array);
+        return TIME_END_RETURN;
     }
     virtual ~InsertSort()
     {
@@ -168,9 +175,12 @@ public:
     typedef  SortBase<T> base;
     
     virtual void onCreate();
-    virtual void onSort(vector<T>& array)
+    virtual float onSort(vector<T>& array)
     {
+        InTime time;
+        TIME_START("");
         base::mSortFunc(array);
+        return TIME_END_RETURN;
     }
     virtual ~ChooseSort()
     {
@@ -221,20 +231,26 @@ public:
     typedef  SortBase<T> base;
     
     virtual void onCreate();
-    virtual void onSort(vector<T>& array)
+    virtual float onSort(vector<T>& array)
     {
+        InTime time;
+        TIME_START("");
         base::mSortFunc(array);
+        return TIME_END_RETURN;
     }
     virtual ~QuickSort()
     {
         
     }
+    private:
+    function<void(vector<T>&,int,int,int&,int&)> mPartitionFunc;
+    function<void(vector<T>&,int,int)> mQuickHelp;
 };
 
 template <class T>
 void QuickSort<T>::onCreate()
 {
-    auto partitionFunc = [&](vector<T> &array,int start,int end,int &lessEnd,int& moreBegin){
+    mPartitionFunc = [&](vector<T> &array,int start,int end,int &lessEnd,int& moreBegin){
         int less = start - 1;
         int more = end;
         while (start < more)
@@ -258,8 +274,7 @@ void QuickSort<T>::onCreate()
         moreBegin = more+1;
     };
     
-    function<void(vector<int>&,int,int)> quickHelp
-     = [&](vector<int> &array,int start,int end)
+    mQuickHelp = [&](vector<T> &array,int start,int end)
     {
         if (start < end)
         {
@@ -268,28 +283,13 @@ void QuickSort<T>::onCreate()
             base::sky_swap(array[index], array[end]);
             int lessEnd = 0;
             int moreBegin = 0;
-            partitionFunc(array,start,end,lessEnd,moreBegin);
-            quickHelp(array,start,lessEnd);
-            quickHelp(array,moreBegin,end);
+            mPartitionFunc(array,start,end,lessEnd,moreBegin);
+            mQuickHelp(array,start,lessEnd);
+            mQuickHelp(array,moreBegin,end);
         }
         return ;
     };
     
-    std::function<void()> test1 = [&]()
-    {
-        int a = 7;
-        int b = 8;
-        base::sky_swap(a,b);
-        return ;
-    };
-    
-    auto test2 = [&]()
-    {
-        int a = 7;
-        int b = 8;
-        base::sky_swap(a,b);
-        return ;
-    };
     base::mSortFunc = [&](vector<T> &array)
     {
         int len = array.size();
@@ -298,10 +298,84 @@ void QuickSort<T>::onCreate()
             FUNC_PRINT_ALL("the length of array is too short", s);
             return true;
         }
-//        quickHelp(array,0,len-1);
-        test2();
-        test1();
+        mQuickHelp(array,0,len-1);
         return true;
     };
 }
+
+
+class QuickSortInt : public SortBase<int>
+{
+    public:
+    virtual void onCreate();
+    virtual float onSort(vector<int>& array)
+    {
+        InTime time;
+        TIME_START("");
+        SortBase<int>::mSortFunc(array);
+        return TIME_END_RETURN;
+    }
+    virtual ~QuickSortInt()
+    {
+        
+    }
+    private:
+    function<void(vector<int>&,int,int)> quickHelp;
+    
+};
+
+void QuickSortInt::onCreate()
+{
+    auto patitionFunc = [&](vector<int> &array,int start,int end,int &lessEnd,int &moreBegin)
+    {
+        int less = start -1;
+        int more = end;
+        while(start < more)
+        {
+            if (array[start] < array[end])
+            {
+                SortBase<int>::sky_swap(array[++less], array[start++]);
+            }
+            else if(array[start] > array[end])
+            {
+                SortBase<int>::sky_swap(array, --more, start);
+            }
+            else
+            {
+                start++;
+            }
+        }
+        SortBase<int>::sky_swap(array, more, end);
+        lessEnd = less;
+        moreBegin = more+1;
+    };
+    
+    quickHelp = [patitionFunc,this](vector<int>& array,int start,int end)
+    {
+        if(start < end)
+        {
+            int lessEnd = 0;
+            int moreBegin = 0;
+            patitionFunc(array,start,end,lessEnd,moreBegin);
+            quickHelp(array,start,lessEnd);
+            quickHelp(array,moreBegin,end);
+        }
+        return;
+    };
+    
+    // when lambda need use the temp variate,we should capture it with the value(this will copy a clone to store for the lambda).if we capture it with the quote,when the action scope is finshed,the temp variate is freed,and the quote is becomed a bad_access error
+    mSortFunc = [=](vector<int> &array)
+    {
+        int length = array.size();
+        if(length < 2)
+        {
+            FUNC_PRINT_ALL("the length of array is too short", s);
+            return true;
+        }
+        quickHelp(array,0,length-1);
+        return true;
+    };
+}
+
+
 #endif /* ALSort_h */

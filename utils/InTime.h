@@ -16,9 +16,11 @@
 #ifdef BUILD_RELEASE
 #define TIME_START(x) 
 #define TIME_END
+#define TIME_END_RETURN
 #else
 #define TIME_START(x) time.start(x)
 #define TIME_END time.endWithPrint()
+#define TIME_END_RETURN time.endWithReturnSpend()
 #endif
 
 class InTime
@@ -55,6 +57,13 @@ public:
         FUNC_PRINT_ALL(time, s);
         mClock.pop();
         mTag.pop();
+    }
+    
+    float endWithReturnSpend()
+    {
+        std::chrono::duration<float > spend = std::chrono::steady_clock::now() - mClock.top();
+        mClock.pop();
+        return spend.count();
     }
 private:
     std::stack<std::chrono::time_point<std::chrono::steady_clock,std::chrono::duration<float >>> mClock;
