@@ -63,6 +63,7 @@ public:
     {
         std::chrono::duration<float > spend = std::chrono::steady_clock::now() - mClock.top();
         mClock.pop();
+        mTag.pop();
         return spend.count();
     }
 private:

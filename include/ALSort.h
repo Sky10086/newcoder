@@ -244,7 +244,7 @@ public:
     }
     private:
     function<void(vector<T>&,int,int,int&,int&)> mPartitionFunc;
-    function<void(vector<T>&,int,int)> mQuickHelp;
+    function<void(vector<T>&,int,int)> mQuickSort;
 };
 
 template <class T>
@@ -274,7 +274,7 @@ void QuickSort<T>::onCreate()
         moreBegin = more+1;
     };
     
-    mQuickHelp = [&](vector<T> &array,int start,int end)
+    mQuickSort = [&](vector<T> &array,int start,int end)
     {
         if (start < end)
         {
@@ -284,8 +284,8 @@ void QuickSort<T>::onCreate()
             int lessEnd = 0;
             int moreBegin = 0;
             mPartitionFunc(array,start,end,lessEnd,moreBegin);
-            mQuickHelp(array,start,lessEnd);
-            mQuickHelp(array,moreBegin,end);
+            mQuickSort(array,start,lessEnd);
+            mQuickSort(array,moreBegin,end);
         }
         return ;
     };
@@ -298,7 +298,7 @@ void QuickSort<T>::onCreate()
             FUNC_PRINT_ALL("the length of array is too short", s);
             return true;
         }
-        mQuickHelp(array,0,len-1);
+        mQuickSort(array,0,len-1);
         return true;
     };
 }
@@ -320,7 +320,7 @@ class QuickSortInt : public SortBase<int>
         
     }
     private:
-    function<void(vector<int>&,int,int)> quickHelp;
+    function<void(vector<int>&,int,int)> mQuickSort;
     
 };
 
@@ -350,15 +350,15 @@ void QuickSortInt::onCreate()
         moreBegin = more+1;
     };
     
-    quickHelp = [patitionFunc,this](vector<int>& array,int start,int end)
+    mQuickSort = [patitionFunc,this](vector<int>& array,int start,int end)
     {
         if(start < end)
         {
             int lessEnd = 0;
             int moreBegin = 0;
             patitionFunc(array,start,end,lessEnd,moreBegin);
-            quickHelp(array,start,lessEnd);
-            quickHelp(array,moreBegin,end);
+            mQuickSort(array,start,lessEnd);
+            mQuickSort(array,moreBegin,end);
         }
         return;
     };
@@ -372,10 +372,281 @@ void QuickSortInt::onCreate()
             FUNC_PRINT_ALL("the length of array is too short", s);
             return true;
         }
-        quickHelp(array,0,length-1);
+        mQuickSort(array,0,length-1);
         return true;
     };
 }
 
 
+/**
+ mergeSort:
+ 1 part the array to arr1 and arr2 with the length n/2
+ 2 recursion 1 ,until the subArray.lengh is 1
+ 3 merge the subArr1(orderd,when it`s len is 1 ,is ordered of course),subArr2(the same as subArr1) ,from the buttom to the top(from subArr`s len 1 to n/2)
+ 
+ example:
+ [2]  [1]   [4]   [5]   [8]    [7]       ---------bottom
+    |        |        |         |
+  [1 2]      [4]    [5 8]       [7]
+         |                  |
+      [1 2 4]           [5 7 8]
+                |
+        [1 2 4 5 7 8]                    ---------top
+ this is the 3 step,merge from bottom to top
+ */
+template <class T>
+class MergeSort : public SortBase<T>
+{
+    typedef SortBase<T> base;
+    public:
+    virtual void onCreate();
+    virtual float onSort(vector<T> &array)
+    {
+        InTime time;
+        TIME_START("");
+        base::mSortFunc(array);
+        return TIME_END_RETURN;
+    }
+    private:
+    function<void(vector<T>&,int,int)> mMergeSort;
+    function<void(vector<T>&,int,int,int)> mMerge;
+};
+
+template <class T>
+void MergeSort<T>::onCreate()
+{
+    base::mSortFunc = [&](vector<T>&array)
+    {
+        int len = array.size();
+        if (len < 2)
+        {
+            FUNC_PRINT_ALL("array len < 2", s)
+            return false;
+        }
+        mMergeSort(array,0,len-1);
+        return true;
+    };
+    
+    mMergeSort = [&](vector<T>&array,int start,int end)
+    {
+        if (start < end)
+        {
+//            int mid = (start+end)/2;
+            // better avoid overflow
+            int mid = start + (end-start)/2;
+            mMergeSort(array,start,mid);
+            mMergeSort(array,mid+1,end);
+            mMerge(array,start,end,mid);
+        }
+        return;
+    };
+    
+    mMerge = [](vector<T>&array,int start,int end,int mid)
+    {
+        vector<T> tempArr(end-start+1);
+        int index = 0;
+        int arrSta1 = start;
+        int arrSta2 = mid+1;
+        while (arrSta1 <= mid && arrSta2 <= end)
+        {
+            if (array[arrSta1] < array[arrSta2])
+            {
+//                tempArr.push_back(array[arrSta1++]);
+                // better avoid malloc too much times
+                tempArr[index++] = array[arrSta1++];
+            }
+            else
+            {
+//                tempArr.push_back(array[arrSta2++]);
+                tempArr[index++] = array[arrSta2++];
+            }
+        }
+        
+        while (arrSta2 <= end)
+        {
+//            tempArr.push_back(array[arrSta2++]);
+            tempArr[index++] = array[arrSta2++];
+        }
+        while (arrSta1 <= mid)
+        {
+//            tempArr.push_back(array[arrSta1++]);
+            tempArr[index++] = array[arrSta1++];
+        }
+        for (int i =start; i <= end; i++)
+        {
+            array[i] = tempArr[i-start];
+        }
+    };
+}
+
+/**
+ heapSort:
+ we think of the array as a entirely binary-tree,we also call it as 'heap'
+ so the left child of array[i] is array[2*i+1] ,right child is array[2*i+2]
+ the father of array[i] is array[(i-1)/2]
+ wo sort the array by these steps:
+ 1 crate the Big-Root-Heap(the heap which all father is biger than its all children(include the subChildren))
+ 2 adjust the Big-Root-Heap,every time swap the root to the end of the array,and the heap`s length mins 1
+ 3 when heap`s length is 1,the array is sorted
+ */
+template <class T>
+class HeapSort : public SortBase<T>
+{
+    typedef SortBase<T> base;
+    public:
+    
+    virtual void onCreate();
+    virtual float onSort(vector<T> &array)
+    {
+        InTime time;
+        TIME_START("");
+        base::mSortFunc(array);
+        return TIME_END_RETURN;
+    }
+    private:
+    function<void(vector<T>&,int,int)> mCreateBigHeap;
+    function<void(vector<T>&,int,int)> mAdjHeap;
+};
+
+template <class T>
+void HeapSort<T>:: onCreate()
+{
+    base::mSortFunc = [&](vector<T>&array)
+    {
+        int len = array.size();
+        if (len < 2)
+        {
+            FUNC_PRINT_ALL("array len < 2", s)
+            return false;
+        }
+        mCreateBigHeap(array,0,len-1);
+        mAdjHeap(array,0,len-1);
+        return true;
+    };
+    
+    mCreateBigHeap = [&](vector<T>&array,int start,int end)
+    {
+        for (int i = start; i <= end; i++)
+        {
+            int fatherIndex = (i-1)/2;
+            int aimIndex = i;
+            while (fatherIndex >= start && array[fatherIndex]< array[aimIndex])
+            {
+                base::sky_swap(array,fatherIndex,aimIndex);
+                aimIndex = fatherIndex;
+                fatherIndex = (fatherIndex-1)/2;
+            }
+        }
+    };
+    mAdjHeap = [&](vector<T>&array,int start,int end)
+    {
+        while (end > start)
+        {
+            base::sky_swap(array,start,end);
+            end--;
+            int adjIndex = start;
+            
+//            while ((2*adjIndex+2) <= end && array[adjIndex] < max(array[2*adjIndex+1],array[2*adjIndex+2]))
+//            {
+//                int bigIndex = array[2*adjIndex+1] > array[2*adjIndex+2] ? 2*adjIndex+1 : 2*adjIndex+2;
+//                base::sky_swap(array,adjIndex,bigIndex);
+//                adjIndex = bigIndex;
+//            }
+//            if(2*adjIndex+1 <= end && array[2*adjIndex+1] > array[ adjIndex])
+//            {
+//                base::sky_swap(array,adjIndex,2*adjIndex+1);
+//            }
+            
+            // both result is right
+            int left = 2*adjIndex+1;
+            while (left <= end)
+            {
+                int bigChild = left;
+                if(left+1 <= end && array[left+1] > array[left])
+                {
+                    bigChild = left+1;
+                }
+                if(array[adjIndex] > array[bigChild])
+                {
+                    break;
+                }
+                base::sky_swap(array,bigChild,adjIndex);
+                adjIndex = bigChild;
+                left = 2*adjIndex+1;
+            }
+        }
+    };
+}
+
+template <class T>
+class RadixSort :public SortBase<T>
+{
+    typedef SortBase<T> base;
+    public:
+    virtual void onCreate();
+    virtual float onSort(vector<T> &array)
+    {
+        InTime time;
+        TIME_START("");
+        base::mSortFunc(array);
+        return TIME_END_RETURN;
+    }
+    public:
+};
+
+template <class T>
+void RadixSort<T>::onCreate()
+{
+    auto getRadixLen = [](int num){
+        int len = 0;
+        while (num)
+        {
+            len++;
+            num /= 10;
+        }
+        return len;
+    };
+    auto getDigit = [](int num,int d){
+        while (--d)
+        {
+            num/=10;
+        }
+        return num%10;
+    };
+    base::mSortFunc = [getRadixLen,getDigit,this](vector<T>&array){
+        int len = array.size();
+        if (len < 2)
+        {
+            FUNC_PRINT_ALL("len is less than 2", s);
+            return true;
+        }
+        vector<int> countArr(10);
+        int max = array[0];
+        for (auto num : array)
+        {
+            max = num > max ? num : max;
+        }
+        int sortTimes = getRadixLen(max);
+        vector<T> tempSortArr(len);
+        for (int i = 1; i <= sortTimes; i++)
+        {
+            for (auto num : array)
+            {
+                int digit = getDigit(num,i);
+                while (digit<10)
+                {
+                    countArr[digit++]++;
+                }
+            }
+            for (int j = len-1; j >=0; j--)
+            {
+                int digit = getDigit(array[j],i);
+                tempSortArr[--countArr[digit]] = array[j];
+            }
+            array = tempSortArr;
+            countArr.assign(10, 0);
+        }
+        return true;
+    };
+}
 #endif /* ALSort_h */
