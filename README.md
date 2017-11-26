@@ -4,7 +4,7 @@ for review basic algorithm.
 Usage
 ====
 ### 1 requirement
-- install cmake
+- install [cmake](https://github.com/Kitware/CMake)
 ### 2 install
 - for mac`s xcode
 ```
