@@ -30,7 +30,7 @@ cd buildXcode
 ./genXcode.sh #or bash genXcode.sh
 ```
 
-## there are some error in the visual studio 2013 when run this project,but in xcode is fine,sorry to windows`s user.I will fix thix as soon as posiable : (.
+## there are some error in the visual studio 2013 when run this project,but in xcode is fine,sorry to windows`s user.I will fix this as soon as posiable : (.
 - for windows`s vs studio 12,the other version just modify the "Visual Studio 12"
 ```
 git clone git@github.com:Sky10086/newcoder.git
