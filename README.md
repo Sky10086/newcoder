@@ -1,5 +1,6 @@
 # newcoder
 for review basic algorithm.
+
 Usage
 ====
 ### 1 requirement
@@ -10,7 +11,7 @@ Usage
 git clone git@github.com:Sky10086/newcoder.git
 cd newcoder
 cd buildXcode
-./genXcode.sh or bash genXcode.sh
+./genXcode.sh #or bash genXcode.sh
 ```
 - for windows`s vs studio 10,the other version just modify the "Visual Studio 10"
 ```
