@@ -1,7 +1,7 @@
 # newcoder
-for review basic algorithm.
+for reviewing basic algorithms.
 
-## now have this algorithm and unit test respectively
+## Here now have these algorithms and unit tests respectively
 
 ### sort algorithm
 - bubble sort
@@ -10,6 +10,7 @@ for review basic algorithm.
 - merge sort
 - quick sort
 - heap sort
+- radix sort
 ### string process
 - KMP algorithm
 - Manacher algorithm
