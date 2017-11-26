@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 #include "Manacher.h"
 
 void Manacher::insertChar(string &str)
