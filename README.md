@@ -1,20 +1,20 @@
-# now have this algorithm and unit test respectively
+# newcoder
+for review basic algorithm.
 
-## sort algorithm
+## now have this algorithm and unit test respectively
+
+### sort algorithm
 - bubble sort
 - select sort
 - insetr sort
 - merge sort
 - quick sort
 - heap sort
-## string process
+### string process
 - KMP algorithm
 - Manacher algorithm
 
-## other coming soon
-
-# newcoder
-for review basic algorithm.
+### other coming soon
 
 Usage
 ====
