@@ -45,12 +45,14 @@ class SkyNewCoderManacherTest:public UnitTestBase
                 string str2 = s2.str();
                 //                str1 = "abcdefgabbcjjj";
                 //                str2 = "abbc";
-                TIME_START("");
+                TIME_START("x");
                 int res = find.maxLcpsLength(str2);
                 spendTime["manacher"]+=TIME_END_RETURN;
-                TIME_START("");
+                
+                TIME_START("y");
                 int oriRes = find.maxLcpsLengthOri(str2);
                 spendTime["oriFindLcps"]+=TIME_END_RETURN;
+                
                 GLASSERT(2*len==res);
                 GLASSERT(2*len==oriRes);
                 
@@ -66,4 +68,4 @@ class SkyNewCoderManacherTest:public UnitTestBase
         virtual ~SkyNewCoderManacherTest(){}
 };
 
-static UnitTestRegister<SkyNewCoderManacherTest> a("SkyNewCoderManacherTest");
+//static UnitTestRegister<SkyNewCoderManacherTest> a("SkyNewCoderManacherTest");

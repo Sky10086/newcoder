@@ -303,7 +303,7 @@ void QuickSort<T>::onCreate()
     };
 }
 
-
+#if 0
 class QuickSortInt : public SortBase<int>
 {
     public:
@@ -376,7 +376,7 @@ void QuickSortInt::onCreate()
         return true;
     };
 }
-
+#endif
 
 /**
  mergeSort:

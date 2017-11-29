@@ -24,8 +24,8 @@ class SkyNewCoderAllSortTest:public UnitTestBase
             selectSort->onCreate();
             auto quickSort = shared_ptr<SortBase<int>>(new QuickSort<int>);
             quickSort->onCreate();
-            auto quickSortInt = shared_ptr<SortBase<int>>(new QuickSortInt);
-            quickSortInt->onCreate();
+//            auto quickSortInt = shared_ptr<SortBase<int>>(new QuickSortInt);
+//            quickSortInt->onCreate();
             auto mergeSort =  shared_ptr<SortBase<int>>(new MergeSort<int>);
             mergeSort->onCreate();
             auto heapSort =  shared_ptr<SortBase<int>>(new HeapSort<int>);
@@ -53,7 +53,7 @@ class SkyNewCoderAllSortTest:public UnitTestBase
                 TIME_START(spendTime.find("bubble")->first);
                 bubble->onSort(bubbleRes);
                 spendTime["bubble"]+=TIME_END_RETURN;
-                
+            
                 TIME_START(spendTime.find("insert")->first);
                 insertSort->onSort(insertRes);
                 spendTime["insert"]+=TIME_END_RETURN;
@@ -69,6 +69,7 @@ class SkyNewCoderAllSortTest:public UnitTestBase
                 spendTime["merge"]+=mergeSort->onSort(mergeRes);
                 
                 spendTime["heap"]+=heapSort->onSort(heapRes);
+                
                 spendTime["radix"]+=radixSort->onSort(radixRes);
                 
 //                quickSortInt->onSort(quickIntRes);

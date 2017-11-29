@@ -35,12 +35,15 @@ class SkyNewCoderKMPTest:public UnitTestBase
                 TIME_START("");
                 bool res = find.isInclude(str1, str2);
                 spendTime["kmp"]+=TIME_END_RETURN;
+                
                 TIME_START("");
                 bool resOri = find.isIncludeOri(str1, str2);
                 spendTime["ori"]+=TIME_END_RETURN;
+                
                 TIME_START("");
                 bool answer = str1.find(str2) != string::npos;
                 spendTime["systemFind"]+=TIME_END_RETURN;
+                
                 GLASSERT(res == answer);
                 GLASSERT(resOri == answer);
                 if (answer)

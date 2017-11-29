@@ -25,16 +25,20 @@ class TestInstanse
 public:
     virtual ~TestInstanse()
     {
-        
+        if (gTestInstance!=NULL)
+        {
+            delete gTestInstance;
+        }
     }
-    static shared_ptr<TestInstanse> get();
+//    static shared_ptr<TestInstanse> get();
+    static TestInstanse* get();
     static void runUnitTest();
     void insert(shared_ptr<UnitTestBase> unit,string name);
     
 private:
     TestInstanse(){}
     vector<shared_ptr<UnitTestBase>> mUnitTest;
-    static shared_ptr<TestInstanse> gTestInstance;
+    static TestInstanse* gTestInstance;
 };
 
 template <class T>
